@@ -43,6 +43,7 @@
 
 
 // ! Elements
+const buttonContainer = document.querySelector('.buttons')
 const choiceButtons = document.querySelectorAll('.choice')
 const chooseTextEl = document.querySelector('#choose')
 const resultScreen = document.querySelector('#results')
@@ -51,41 +52,92 @@ const resultTextEl = document.querySelector('#result-text')
 const playerChoiceEl = document.querySelector('#player-choice')
 const computerChoiceEl = document.querySelector('#computer-choice')
 
+// ! Variables
+let playerChoice
+let computerChoice
+let result
+
+// ! Constants
+
 
 // ! Executions
-function playerChoice(){
-  // 1. Determine which choice was clicked
-  // 2. Display the player choice to the user
-  // 3. Call the function that generates a random computer choice
-  
+function play(event){
+  getPlayerChoice(event)
+  getComputerChoice()
+  determineResult()
+  displayResults()
 }
 
-function generateComputerChoice(){
+function getPlayerChoice(event){
+  // 1. Determine which choice was clicked
+  playerChoice = event.target.value
+}
+
+function getComputerChoice(){
   // To generate the computer choice, we will add all possible choices to an array
+  const choices = ['Rock', 'Paper', 'Scissors']
   // We will then use Math.random() to generate a random index between 0 and 2
+  const index = Math.floor(Math.random() * choices.length)
   // This index will be used to find the computer choice from the choices array
-  // Once computer choice is generated, display the choice clearly to the user
+  computerChoice = choices[index]
 }
 
 function determineResult(){
-  // Use the computerChoice and the playerChoice to determine a result
+  if(playerChoice === computerChoice) {
+    result = 'It was a draw!'
+  } else if (
+    (playerChoice === 'Rock' && computerChoice === 'Scissors') ||
+    (playerChoice === 'Paper' && computerChoice === 'Rock') ||
+    (playerChoice === 'Scissors' && computerChoice === 'Paper')
+  ){
+    result = 'You won!'
+  } else {
+    result = 'You lost!'
+  }
+  console.log(playerChoice, computerChoice, result)
+}
 
-  // if player and computer choices match, its a draw
+function displayResults(){
+  // Display results screen
+  resultScreen.classList.remove('hide')
 
-  // if player chooses rock and computer chooses scissors, player wins
-  // if player chooses paper and computer chooses rock, player wins
-  // if player chooses scissors and computer chooses paper, player wins
+  // Remove choose
+  chooseTextEl.classList.add('hide')
 
-  // else computer wins
+  // Remove buttons
+  buttonContainer.classList.add('hide')
 
+  // display result text
+  resultTextEl.textContent = result
 
-  // Display that result
+  // display player choice
+  playerChoiceEl.textContent = `Player choice: ${playerChoice}`
+
+  // display computer choice
+  computerChoiceEl.textContent = `Computer choice: ${computerChoice}`
 }
 
 function resetGame(){
-  // On click of play again, display "choose", hide results
+  // Hide results screen
+  resultScreen.classList.add('hide')
+
+  // Show "choose"
+  chooseTextEl.classList.remove('hide')
+
+  // Show choice buttons
+  buttonContainer.classList.remove('hide')
+
+  // Reset result, playerChoice & computerChoice
+  result = ''
+  playerChoice = ''
+  computerChoice = ''
 }
 
 // ! Events
 // Add a click event to each choice button
+choiceButtons.forEach(btn => {
+  btn.addEventListener('click', play)
+})
+
 // Add a click event to the play again button
+playAgainBtn.addEventListener('click', resetGame)
